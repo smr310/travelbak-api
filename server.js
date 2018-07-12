@@ -11,7 +11,7 @@ app.use(
 );
 
 app.get('/api/*', (req, res) => {
-    res.json({ ok: true, weather: 'sunny' });
+    res.json({ ok: true });
 });
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
