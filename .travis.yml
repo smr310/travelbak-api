@@ -1,8 +1,11 @@
- language: node_js
- node_js: node
- services:
-     - mongodb
-
-
-     
-
+language: node_js
+node_js: node
+services:
+- mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: RAe7Fw1ETnxpid+5hxHfvhUVGMvB4IPq0wZ67dgoaJT+hvfEe/336iqbXmNwp1joLLKnL3kzKtDb4SD5wWp6A60lzxVcixUCsOVIxKoJrKLgmD4LUfPFHstL0duI//GfbHYxrd3J2gzXjuwXfNetKaOUS6kG+t2YfY1gxOaebSDLW0VspasUpFjYvqIJjMW58avcP9AX7IXT9p+0mwX9fvGEqvzvLAvKUMjQ1QPCTx7nGGH8EoL9++A2vI3YZ+Z3jSVC8PmRRjXBDUY8ijgf0UiTtD8aZ9Azz69dS1ZSWMuEfE4xCqPDfoiGjLtHp/4iQpiWPmtx9tcq/JcTP6s1TgVUOF7jbSGH1D1avbodX6Zpe91ac4uGYEDjxi5jWGXPHeWvbqwgmXa60dTVRYpbOt41Ek5CMXbJ9Yz6KELwiWa8R/EiI2W9dKxHVE6AVjI4hbBDFX1ETGBWbogkIwU1RTnrAmk3cdPX0cBMNYzBVndeEXNgc/4QhkmsM7OUifgob1z2e5eWzPWyb5grfRQGVBAWJvt/6EFwUR21SLGYKNgugIQ7YdZ1oZrTHwfUbCj4U14oob2YAqp1egZ8r0RXe8VycqSkhPy5JqXfI3zcbyqVOH4sPb2BsnlIjuYwltRj6nHxTE2J+2SYD+8CwUtGE37FZbPxViGkEDban6SZo7M=
+  app: nameless-bayou-38988
+  on:
+    repo: smr310/travelbak-api
