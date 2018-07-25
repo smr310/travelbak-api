@@ -4,9 +4,10 @@ const mongoose = require('mongoose');
 const { journalEntrySchema } = require('../models/journalEntryModel')
 
 const tripSchema = mongoose.Schema({
-    title: { type: String, required: true },
-    startDate: { type: String, required: true },
-    endDate: { type: String, required: true },
+    title: { type: String },
+    location: { type: String },
+    startDate: { type: String },
+    endDate: { type: String },
     journalEntries: [journalEntrySchema]
 });
 

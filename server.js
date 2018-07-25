@@ -5,7 +5,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const { PORT, DATABASE_URL, CLIENT_ORIGIN } = require('./config.js');
-// const { Trip } = require('./models');
+const { User } = require('./users/models');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
@@ -36,34 +36,169 @@ app.use('/api/auth/', authRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
+//Routes that I need to build: 
 
-app.post('/trips', (req, res) => {
-    console.log('this is req.body', req.body)
-    Trip
-        .create({
-            title: req.body.title,
-            startDate: req.body.startDate,
-            endDate: req.body.endDate,
-            journalEntries: req.body.journalEntries
+//      post /trip                  YES --- Wired to front end (BUT STILL NEED TO ADD DATE FUNCTIONALITY, ALSO NEEDS TO GRAB USERID, AND TRIPID)
+//      post /journalEntry          YES --- Wired to front end (BUT STILL NEED TO ADD DATE FUNCTIONALITY, ALSO NEEDS TO GRAB USERID)
+
+//      get /trip                   YES (returns array of all trips) -- Partially wired to frontend   
+
+//      put /trip                   YES
+//      put /journalEntry           YES
+
+//      delete /trip                YES -- Wired to front end -- STILL NEED TO GRAB USERID
+//      delete /journalEntry        YES -- Wired to front end -- STILL NEED TO GRAB USERID
+
+
+app.get('/api/trip/:userId', (req, res) => {
+    User.findById(req.params.userId)
+        .then(user => {
+            res.json(user.trips)
         })
-        .then(
-            trip => res.status(200).json(trip))
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ message: 'Internal server error' });
-        });
-});
+})
+
+app.post('/api/trip/:userId', (req, res) => {
+    const newTrip = {
+        title: req.body.title,
+        location: req.body.location,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate
+    }
+
+    User.findById(req.params.userId)
+        .then(user => {
+            user.trips.push(newTrip)
+
+            user.save(err => {
+                if (err) {
+                    res.send(err)
+                }
+                
+                let n = user.trips.length;
+                res.json(user.trips[n-1])
+                //user.findbyID -- find the trip 
+                //user.trip.id(...)
+                //send that back the trip
+                //we need the trip that they just added 
+            })
 
 
-app.get('/trips', (req, res) => {
-    Trip
-        .find()
-        .then(trips => res.json(trips))
-        .catch(err => {
-            console.error(err)
-            res.status(500).json({ message: 'Something went wrong' })
-        }
-        );
+
+        })
+})
+
+app.delete('/api/trip/:userId', (req, res) => {
+
+    User.findById(req.params.userId)
+        .then(user => {
+
+            user.trips.id(req.body.tripId).remove()
+
+            user.save(err => {
+                if (err) {
+                    res.send(err)
+                }
+                res.json(user.trips)
+            })
+        })
+})
+
+
+app.put('/api/trip/:userId', (req, res) => {
+
+    User.findById(req.params.userId)
+        .then(user => {
+            let trip = user.trips.id(req.body.tripId);
+            trip.title = req.body.title,
+            trip.location = req.body.location,
+            trip.startDate = req.body.startDate,
+            trip.endDate = req.body.endDate
+
+            user.save(err => {
+                if (err) {
+                    res.send(err)
+                }
+                res.json(user.trips.id(req.body.tripId))
+            })
+        })
+})
+
+
+//journal entry routes
+
+app.delete('/api/journal/:userId', (req, res) => {
+
+    User.findById(req.params.userId)
+        .then(user => {
+            const trip = user.trips.id(req.body.tripId);
+            const journalEntry = trip.journalEntries.id(req.body.journalEntryId);
+            
+            journalEntry.remove();
+
+            user.save(err => {
+                if (err) {
+                    res.send(err)
+                }
+                res.json(trip)
+            })
+        })
+})
+
+app.put('/api/journal/:userId', (req, res) => {
+
+    console.log('this is req.body', req.body)
+
+    User.findById(req.params.userId)
+        .then(user => {
+            const trip = user.trips.id(req.body.journalEntry.tripId);
+            console.log('this is trip:', trip)
+
+            let journalEntry = trip.journalEntries.id(req.body.journalEntry.journalEntryId);
+
+            journalEntry.content = req.body.journalEntry.content;
+            journalEntry.date = req.body.journalEntry.date;
+
+            user.save(err => {
+                if (err) {
+                    res.send(err)
+                }
+                res.json(journalEntry);
+            })
+        })
+})
+
+
+app.post('/api/journal/:userId', (req, res) => {
+    const newJournalEntry = {
+        content: req.body.content,
+        date: req.body.date
+    }
+
+    User.findById(req.params.userId)
+        .then(user => {
+            const trip = user.trips.id(req.body.tripId);
+            trip.journalEntries.push(newJournalEntry)
+
+            user.save(err => {
+                if (err) {
+                    res.send(err)
+                }
+                res.json(trip)
+            })
+        })
+})
+
+
+
+
+//how can i get get request to work with no body?
+//Actually -- If I dont think I need this. If I do get request for a trip, it will have all the entries
+app.get('/api/journal/:userId', (req, res) => {
+    User.findById(req.params.userId)
+        .then(user => {
+            const trip = user.trips.id(req.body.tripId)
+            res.json(trip.journalEntries)
+        })
 })
 
 
@@ -112,3 +247,4 @@ if (require.main === module) {
 
 
 module.exports = { app, runServer, closeServer };
+
