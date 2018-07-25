@@ -162,7 +162,7 @@ app.put('/api/journal/:userId', (req, res) => {
                 if (err) {
                     res.send(err)
                 }
-                res.json(journalEntry);
+                res.json(trip);
             })
         })
 })
