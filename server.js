@@ -36,19 +36,6 @@ app.use('/api/auth/', authRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-//Routes that I need to build: 
-
-//      post /trip                  YES --- Wired to front end (BUT STILL NEED TO ADD DATE FUNCTIONALITY, ALSO NEEDS TO GRAB USERID, AND TRIPID)
-//      post /journalEntry          YES --- Wired to front end (BUT STILL NEED TO ADD DATE FUNCTIONALITY, ALSO NEEDS TO GRAB USERID)
-
-//      get /trip                   YES (returns array of all trips) -- Partially wired to frontend   
-
-//      put /trip                   YES
-//      put /journalEntry           YES
-
-//      delete /trip                YES -- Wired to front end -- STILL NEED TO GRAB USERID
-//      delete /journalEntry        YES -- Wired to front end -- STILL NEED TO GRAB USERID
-
 
 app.get('/api/trip/:userId', (req, res) => {
     User.findById(req.params.userId)
@@ -157,6 +144,7 @@ app.put('/api/journal/:userId', (req, res) => {
 
             journalEntry.content = req.body.journalEntry.content;
             journalEntry.date = req.body.journalEntry.date;
+            journalEntry.title = req.body.journalEntry.title;
 
             user.save(err => {
                 if (err) {
@@ -170,6 +158,7 @@ app.put('/api/journal/:userId', (req, res) => {
 
 app.post('/api/journal/:userId', (req, res) => {
     const newJournalEntry = {
+        title: req.body.title,
         content: req.body.content,
         date: req.body.date
     }

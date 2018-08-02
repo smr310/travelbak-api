@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 
 const journalEntrySchema = mongoose.Schema({
+    title: { type: String },
     content: { type: String },
     date: { type: String }
 });
