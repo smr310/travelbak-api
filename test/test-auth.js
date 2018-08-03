@@ -8,7 +8,10 @@ const { app, runServer, closeServer } = require('../server');
 const { User } = require('../users');
 const { JWT_SECRET } = require('../config');
 
+require('dotenv').config();
+
 const expect = chai.expect;
+const { TEST_DATABASE_URL } = require('../config');
 
 // This let's us make HTTP requests
 // in our tests.
@@ -22,7 +25,7 @@ describe('Auth endpoints', function () {
     const lastName = 'User';
 
     before(function () {
-        return runServer();
+        return runServer(TEST_DATABASE_URL);
     });
 
     after(function () {

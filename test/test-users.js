@@ -8,6 +8,9 @@ const { User } = require('../users');
 
 const expect = chai.expect;
 
+require('dotenv').config();
+const { TEST_DATABASE_URL } = require('../config');
+
 // This let's us make HTTP requests
 // in our tests.
 // see: https://github.com/chaijs/chai-http
@@ -24,7 +27,7 @@ describe('/api/user', function () {
     const lastNameB = 'UserB';
 
     before(function () {
-        return runServer();
+        return runServer(TEST_DATABASE_URL);
     });
 
     after(function () {
