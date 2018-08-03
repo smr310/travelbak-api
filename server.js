@@ -54,7 +54,7 @@ app.post('/api/trip/:userId', (req, res) => {
 
     User.findById(req.params.userId)
         .then(user => {
-            user.trips.push(newTrip)
+            user.trips.push(newTrip)   
 
             user.save(err => {
                 if (err) {
