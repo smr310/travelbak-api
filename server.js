@@ -34,6 +34,8 @@ passport.use(jwtStrategy);
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
 
+const jwtAuth = passport.authenticate('jwt', { session: false });
+
 
 // CORS 
 app.use(function (req, res, next) {
@@ -47,17 +49,14 @@ app.use(function (req, res, next) {
 });
 
 
-const jwtAuth = passport.authenticate('jwt', { session: false });
-
-
-app.get('/api/trip/:userId', (req, res) => {
+app.get('/api/trip/:userId', jwtAuth, (req, res) => {
     User.findById(req.params.userId)
         .then(user => {
             res.json(user.trips)
-        })
+        });
 })
 
-app.post('/api/trip/:userId', (req, res) => {
+app.post('/api/trip/:userId', jwtAuth, (req, res) => {
     const newTrip = {
         title: req.body.title,
         location: req.body.location,
@@ -67,6 +66,7 @@ app.post('/api/trip/:userId', (req, res) => {
 
     User.findById(req.params.userId)
         .then(user => {
+            // console.log('this is user', user)
             user.trips.push(newTrip)   
 
             user.save(err => {
@@ -81,13 +81,10 @@ app.post('/api/trip/:userId', (req, res) => {
                 //send that back the trip
                 //we need the trip that they just added 
             })
-
-
-
         })
 })
 
-app.delete('/api/trip/:userId', (req, res) => {
+app.delete('/api/trip/:userId', jwtAuth, (req, res) => {
 
     User.findById(req.params.userId)
         .then(user => {
@@ -104,7 +101,7 @@ app.delete('/api/trip/:userId', (req, res) => {
 })
 
 
-app.put('/api/trip/:userId', (req, res) => {
+app.put('/api/trip/:userId', jwtAuth, (req, res) => {
 
     User.findById(req.params.userId)
         .then(user => {
@@ -126,7 +123,7 @@ app.put('/api/trip/:userId', (req, res) => {
 
 //journal entry routes
 
-app.delete('/api/journal/:userId', (req, res) => {
+app.delete('/api/journal/:userId', jwtAuth, (req, res) => {
 
     User.findById(req.params.userId)
         .then(user => {
@@ -144,9 +141,7 @@ app.delete('/api/journal/:userId', (req, res) => {
         })
 })
 
-app.put('/api/journal/:userId', (req, res) => {
-
-    console.log('this is req.body', req.body)
+app.put('/api/journal/:userId', jwtAuth, (req, res) => {
 
     User.findById(req.params.userId)
         .then(user => {
@@ -169,7 +164,7 @@ app.put('/api/journal/:userId', (req, res) => {
 })
 
 
-app.post('/api/journal/:userId', (req, res) => {
+app.post('/api/journal/:userId', jwtAuth, (req, res) => {
     const newJournalEntry = {
         title: req.body.title,
         content: req.body.content,
